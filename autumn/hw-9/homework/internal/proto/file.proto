@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package file;
+
+import "validate/validate.proto";
+
+option go_package = "./internal/proto";
+
+service FileService {
+    rpc Get(GetRequest) returns (stream GetResponse);
+    rpc All(AllRequest) returns (AllResponse);   
+    rpc GetInfo(GetInfoRequest) returns (GetInfoResponse);
+}
+
+message GetRequest {
+    string filename = 1 [(validate.rules).string = {
+        not_contains: "/",
+        max_bytes:    255,
+        min_bytes:    1,
+    }];
+}
+
+message GetResponse {
+    bytes file = 1;
+}
+
+message AllRequest {}
+
+message AllResponse {
+    repeated string filenames = 1;
+}
+
+message GetInfoRequest {
+    string filename = 1 [(validate.rules).string = {
+        not_contains: "/",
+        max_bytes:    255,
+        min_bytes:    1,
+    }];
+}
+
+message GetInfoResponse {
+    string filename = 1;
+    string type = 2;
+    uint64 size = 3;
+}
